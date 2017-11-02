@@ -9,13 +9,25 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.mehedi.qrcode.MainActivity">
 
+
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Generate"
+        android:text="Generate QR"
         android:id="@+id/button"
+
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/scanButton"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scan QR Code"
+        android:onClick="onClick"
+        android:id="@+id/scanButton"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        />
 
     <EditText
         android:layout_width="wrap_content"
