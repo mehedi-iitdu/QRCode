@@ -21,7 +21,7 @@ import android.view.View;
 import com.google.zxing.Result;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
+public class MainActivity extends AppCompatActivity{
 
     private Button button;
     private EditText editText;
@@ -53,26 +53,12 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         });
     }
 
-    //QR Scanner
-
-    private ZXingScannerView mScannerView;
-
-
     public void onClick(View v){
-        mScannerView = new ZXingScannerView(this);
-        setContentView(mScannerView);
-        mScannerView.setResultHandler(this);
-        mScannerView.startCamera();
+        Intent intent = new Intent(getApplicationContext(), QrScannerActivity.class);
+        startActivity(intent);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mScannerView.stopCamera();
-    }
-
-    @Override
-    public void handleResult(Result result) {
+    /*public void handleResult(Result result) {
         //Do anything with result here :D
         Log.w("handleResult", result.getText());
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -83,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
         //Resume scanning
         //mScannerView.resumeCameraPreview(this);
-    }
+    }*/
 
 
 }

@@ -3,6 +3,8 @@
     package="com.example.mehedi.qrcode">
     <uses-permission android:name="android.permission.CAMERA"/>
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -20,7 +22,12 @@
         <activity
             android:name=".QrActivity"
             android:label="@string/title_activity_qr"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".QrScannerActivity"
+            android:label="@string/title_activity_qr_scanner"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
