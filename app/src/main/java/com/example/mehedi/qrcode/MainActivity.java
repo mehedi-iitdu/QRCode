@@ -1,56 +1,48 @@
 package com.example.mehedi.qrcode;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-
-import android.app.AlertDialog;
 import android.util.Log;
-import android.view.View;
-import com.google.zxing.Result;
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements OTPListener {
 
-    private Button button;
-    private EditText editText;
+    int PERMISSION_ALL = 1;
+    String[] PERMISSIONS = {Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.CAMERA};
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        OtpReader.bind(this,"TrxID");
 
-        final Context context = this;
-        editText = (EditText) this.findViewById(R.id.editText);
-        button = (Button) this.findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String text2Qr = editText.getText().toString();
-                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-                try {
-                    BitMatrix bitMatrix = multiFormatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,200,200);
-                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                    Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-                    Intent intent = new Intent(context, QrActivity.class);
-                    intent.putExtra("pic",bitmap);
-                    context.startActivity(intent);
-                } catch (WriterException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        if(!hasPermissions(this, PERMISSIONS)){
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        }
     }
 
     public void onClick(View v){
@@ -58,18 +50,22 @@ public class MainActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
-    /*public void handleResult(Result result) {
-        //Do anything with result here :D
-        Log.w("handleResult", result.getText());
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Scan result");
-        builder.setMessage(result.getText());
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-
-        //Resume scanning
-        //mScannerView.resumeCameraPreview(this);
-    }*/
-
-
+    @Override
+    public void otpReceived(String messageText) {
+        //Toast.makeText(this,"Got "+messageText,Toast.LENGTH_LONG).show();
+        Log.d("Otp",messageText);
+        String[] strings = messageText.trim().split("TrxID");
+        String text2Qr = "TrxID "+ strings[1].substring(0,10);
+        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        try {
+            BitMatrix bitMatrix = multiFormatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,200,200);
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+            Intent intent = new Intent(getApplicationContext(), QrActivity.class);
+            intent.putExtra("pic",bitmap);
+            getApplicationContext().startActivity(intent);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+    }
 }
