@@ -7,4 +7,6 @@ package com.example.mehedi.qrcode;
 public interface OTPListener {
 
     void otpReceived(String messageText);
+
+    void itemClick(SMS sms);
 }
